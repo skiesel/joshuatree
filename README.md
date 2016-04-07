@@ -1,2 +1,3 @@
 # joshuatree
-Monte Carlo Tree Search for some games
+
+Monte Carlo Tree Search for some simple games
