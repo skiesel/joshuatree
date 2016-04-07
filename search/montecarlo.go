@@ -2,9 +2,9 @@ package search
 
 import (
 	"fmt"
-	"github.com/skiesel/mcts/domains"
-	"github.com/skiesel/mcts/policies/exterior"
-	"github.com/skiesel/mcts/policies/interior"
+	"github.com/skiesel/joshuatree/domains"
+	"github.com/skiesel/joshuatree/policies/exterior"
+	"github.com/skiesel/joshuatree/policies/interior"
 	"time"
 )
 
@@ -14,8 +14,8 @@ type MonteCarlo struct {
 	MoveTimeout    float64
 	PlayerId       int64
 	OtherPlayerIds []int64
-	InteriorPolicy interior_policies.InteriorTreePolicy
-	ExteriorPolicy exterior_policies.ExteriorTreePolicy
+	InteriorPolicy interior.InteriorTreePolicy
+	ExteriorPolicy exterior.ExteriorTreePolicy
 }
 
 type decisionNode struct {
@@ -40,8 +40,8 @@ func NewMonteCarlo(playerId int64, otherPlayerIds []int64, moveTimeout, uctCValu
 		MoveTimeout:    moveTimeout,
 		PlayerId:       playerId,
 		OtherPlayerIds: otherPlayerIds,
-		InteriorPolicy: interior_policies.NewUCTPolicy(uctCValue),
-		ExteriorPolicy: exterior_policies.NewRandomPolicy(),
+		InteriorPolicy: interior.NewUCTPolicy(uctCValue),
+		ExteriorPolicy: exterior.NewRandomPolicy(),
 	}
 }
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/skiesel/mcts/domains"
-	"github.com/skiesel/mcts/games"
-	"github.com/skiesel/mcts/players"
+	"github.com/skiesel/joshuatree/domains"
+	"github.com/skiesel/joshuatree/games"
+	"github.com/skiesel/joshuatree/players"
 )
 
 func main() {

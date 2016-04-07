@@ -2,8 +2,8 @@ package games
 
 import (
 	"fmt"
-	"github.com/skiesel/mcts/domains"
-	"github.com/skiesel/mcts/players"
+	"github.com/skiesel/joshuatree/domains"
+	"github.com/skiesel/joshuatree/players"
 	"math/rand"
 	"time"
 )

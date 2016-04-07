@@ -1,7 +1,7 @@
 package players
 
 import (
-	"github.com/skiesel/mcts/domains"
+	"github.com/skiesel/joshuatree/domains"
 )
 
 type Player interface {

@@ -3,7 +3,7 @@ package players
 import (
 	"bufio"
 	"fmt"
-	"github.com/skiesel/mcts/domains"
+	"github.com/skiesel/joshuatree/domains"
 	"os"
 	"strconv"
 	"strings"

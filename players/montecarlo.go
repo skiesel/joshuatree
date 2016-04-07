@@ -1,8 +1,8 @@
 package players
 
 import (
-	"github.com/skiesel/mcts/domains"
-	"github.com/skiesel/mcts/search"
+	"github.com/skiesel/joshuatree/domains"
+	"github.com/skiesel/joshuatree/search"
 )
 
 type MonteCarloPlayer struct {

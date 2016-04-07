@@ -1,17 +1,17 @@
 package players
 
 import (
-	"github.com/skiesel/mcts/domains"
-	"github.com/skiesel/mcts/policies/exterior"
+	"github.com/skiesel/joshuatree/domains"
+	"github.com/skiesel/joshuatree/policies/exterior"
 )
 
 type RandomPlayer struct {
-	policy *exterior_policies.RandomPolicy
+	policy *exterior.RandomPolicy
 }
 
 func NewRandomPlayer() *RandomPlayer {
 	return &RandomPlayer{
-		policy: exterior_policies.NewRandomPolicy(),
+		policy: exterior.NewRandomPolicy(),
 	}
 }
 
