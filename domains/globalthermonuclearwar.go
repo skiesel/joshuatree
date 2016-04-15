@@ -8,6 +8,10 @@ const (
 	NO_ONE = -1
 )
 
+var (
+	printedOnce = false
+)
+
 type GlobalThermalNuclearWar struct {
 }
 
@@ -18,6 +22,10 @@ type GlobalThermalNuclearWarAction struct {
 }
 
 func (gtnw GlobalThermalNuclearWar) GetStartState() State {
+	if !printedOnce {
+		fmt.Println("The only winning move is not to play.")
+	}
+	printedOnce = true
 	return &GlobalThermalNuclearWarState{}
 }
 
@@ -26,12 +34,12 @@ func (gtnw GlobalThermalNuclearWar) GetAvailableActions(state State) []Action {
 	return []Action{}
 }
 
-func (gtnw GlobalThermalNuclearWar) HashState(state State) int64 {
-	return 0
+func (gtnw GlobalThermalNuclearWar) StateString(state State) string {
+	return ""
 }
 
-func (gtnw GlobalThermalNuclearWar) HashAction(action Action) int64 {
-	return 0
+func (gtnw GlobalThermalNuclearWar) ActionString(action Action) string {
+	return ""
 }
 
 func (gtnw GlobalThermalNuclearWar) ApplyAction(state State, action Action, playerIndex int64) State {

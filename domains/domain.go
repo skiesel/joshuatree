@@ -1,7 +1,7 @@
 package domains
 
 const (
-	TIE = -1
+	TIE = int64(-1)
 )
 
 type Domain interface {
@@ -15,12 +15,12 @@ type Domain interface {
 	WhoWon(state State) int64
 
 	Draw(state State)
-	HashState(state State) int64
+	StateString(state State) string
 	CompareStates(state1, state2 State) int64
 
 	CompareActions(action1, action2 Action) int64
 	GetString(action Action) string
-	HashAction(action Action) int64
+	ActionString(action Action) string
 }
 
 type State interface {

@@ -20,13 +20,13 @@ type MonteCarlo struct {
 
 type decisionNode struct {
 	state       domains.State
-	arcs        map[int64]*decisionArc
+	arcs        map[string]*decisionArc
 	numTrials   int64
 	initialized bool
 }
 
 type decisionArc struct {
-	next      map[int64]*decisionNode
+	next      map[string]*decisionNode
 	action    domains.Action
 	numTrials int64
 	numWins   int64
@@ -49,7 +49,7 @@ func buildStartNode(domain domains.Domain) *decisionNode {
 	startState := domain.GetStartState()
 	return &decisionNode{
 		state:       startState,
-		arcs:        map[int64]*decisionArc{},
+		arcs:        map[string]*decisionArc{},
 		numTrials:   1,
 		initialized: false,
 	}
@@ -66,23 +66,23 @@ func (monteCarlo *MonteCarlo) UpdateForOpposingAction(domain domains.Domain, sta
 		return
 	}
 
-	actionHash := domain.HashAction(opposingActions[0])
-	arc, found := monteCarlo.current.arcs[actionHash]
+	actionString := domain.ActionString(opposingActions[0])
+	arc, found := monteCarlo.current.arcs[actionString]
 	if !found {
 		arc = &decisionArc{}
-		monteCarlo.current.arcs[actionHash] = arc
+		monteCarlo.current.arcs[actionString] = arc
 	}
 
-	stateHash := domain.HashState(state)
-	node, found := arc.next[stateHash]
+	stateString := domain.StateString(state)
+	node, found := arc.next[stateString]
 	if !found {
 		node = &decisionNode{
 			state:       state,
-			arcs:        map[int64]*decisionArc{},
+			arcs:        map[string]*decisionArc{},
 			numTrials:   1,
 			initialized: false,
 		}
-		arc.next[stateHash] = node
+		arc.next[stateString] = node
 	}
 
 	monteCarlo.current = node
@@ -137,16 +137,16 @@ func (monteCarlo MonteCarlo) sampleOutcome(domain domains.Domain, state domains.
 		}
 	}
 
-	hash := domain.HashState(nextState)
-	node, found := arc.next[hash]
+	str := domain.StateString(nextState)
+	node, found := arc.next[str]
 	if !found {
 		node = &decisionNode{
 			state:       nextState,
-			arcs:        map[int64]*decisionArc{},
+			arcs:        map[string]*decisionArc{},
 			numTrials:   1,
 			initialized: false,
 		}
-		arc.next[hash] = node
+		arc.next[str] = node
 	}
 
 	return node
@@ -169,13 +169,6 @@ func (monteCarlo MonteCarlo) doFullRollOut(domain domains.Domain, state domains.
 	for !domain.IsTerminal(currentState) {
 		currentState = monteCarlo.doSimulationFullRound(domain, currentState)
 	}
-
-	// domain.Draw(currentState)
-	// if domain.DidWin(currentState, monteCarlo.PlayerId) {
-	// 	fmt.Println("win")
-	// } else {
-	// 	fmt.Println("!win")
-	// }
 
 	return domain.DidWin(currentState, monteCarlo.PlayerId)
 }
@@ -201,13 +194,13 @@ func (monteCarlo MonteCarlo) doSimulationSingleStep(domain domains.Domain, state
 	return domain.ApplyAction(state, action, playerId)
 }
 
-func (monteCarlo MonteCarlo) createdecisionArcs(domain domains.Domain, state domains.State) map[int64]*decisionArc {
+func (monteCarlo MonteCarlo) createdecisionArcs(domain domains.Domain, state domains.State) map[string]*decisionArc {
 	actions := domain.GetAvailableActions(state)
-	nodes := map[int64]*decisionArc{}
+	nodes := map[string]*decisionArc{}
 	for _, action := range actions {
-		hash := domain.HashAction(action)
-		nodes[hash] = &decisionArc{
-			next:      map[int64]*decisionNode{},
+		str := domain.ActionString(action)
+		nodes[str] = &decisionArc{
+			next:      map[string]*decisionNode{},
 			action:    action,
 			numTrials: 1,
 			numWins:   1,

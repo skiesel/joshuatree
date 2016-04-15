@@ -2,7 +2,6 @@ package domains
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type TicTacToe struct {
@@ -38,7 +37,7 @@ func (tictactoe TicTacToe) GetAvailableActions(state State) []Action {
 	return actions
 }
 
-func (tictactoe TicTacToe) HashState(state State) int64 {
+func (tictactoe TicTacToe) StateString(state State) string {
 	tictactoeState := state.(TicTacToeState)
 	str := ""
 	for _, cell := range tictactoeState.board {
@@ -48,16 +47,12 @@ func (tictactoe TicTacToe) HashState(state State) int64 {
 			str += fmt.Sprintf("%d", cell)
 		}
 	}
-	hash, err := strconv.ParseInt(str, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	return hash
+	return str
 }
 
-func (tictactoe TicTacToe) HashAction(action Action) int64 {
+func (tictactoe TicTacToe) ActionString(action Action) string {
 	tictactoeAction := action.(TicTacToeAction)
-	return tictactoeAction.which
+	return fmt.Sprintf("%d", tictactoeAction.which)
 }
 
 func (tictactoe TicTacToe) ApplyAction(state State, action Action, playerIndex int64) State {
@@ -95,19 +90,19 @@ func (tictactoe TicTacToe) Draw(state State) {
 func (tictactoe TicTacToe) IsTerminal(state State) bool {
 	tictactoeState := state.(TicTacToeState)
 	noMoreMoves := len(tictactoe.GetAvailableActions(state)) == 0
-	return noMoreMoves || checkHorizontalWin(tictactoeState) != TIE || checkVerticalWin(tictactoeState) != TIE || checkDiagonalWin(tictactoeState) != TIE
+	return noMoreMoves || checkHorizontalWinTicTacToe(tictactoeState) != TIE || checkVerticalWinTicTacToe(tictactoeState) != TIE || checkDiagonalWinTicTacToe(tictactoeState) != TIE
 }
 
 func (tictactoe TicTacToe) DidWin(state State, playerIndex int64) bool {
 	tictactoeState := state.(TicTacToeState)
-	return checkHorizontalWin(tictactoeState) == playerIndex || checkVerticalWin(tictactoeState) == playerIndex || checkDiagonalWin(tictactoeState) == playerIndex
+	return checkHorizontalWinTicTacToe(tictactoeState) == playerIndex || checkVerticalWinTicTacToe(tictactoeState) == playerIndex || checkDiagonalWinTicTacToe(tictactoeState) == playerIndex
 }
 
 func (tictactoe TicTacToe) WhoWon(state State) int64 {
 	tictactoeState := state.(TicTacToeState)
-	horizontalWin := checkHorizontalWin(tictactoeState)
-	verticalWin := checkVerticalWin(tictactoeState)
-	diagonalWin := checkDiagonalWin(tictactoeState)
+	horizontalWin := checkHorizontalWinTicTacToe(tictactoeState)
+	verticalWin := checkVerticalWinTicTacToe(tictactoeState)
+	diagonalWin := checkDiagonalWinTicTacToe(tictactoeState)
 	if horizontalWin != TIE {
 		return horizontalWin
 	}
@@ -120,7 +115,7 @@ func (tictactoe TicTacToe) WhoWon(state State) int64 {
 	return TIE
 }
 
-func checkHorizontalWin(state TicTacToeState) int64 {
+func checkHorizontalWinTicTacToe(state TicTacToeState) int64 {
 	if state.board[0] != TIE && state.board[0] == state.board[1] && state.board[1] == state.board[2] {
 		return state.board[0]
 	}
@@ -133,7 +128,7 @@ func checkHorizontalWin(state TicTacToeState) int64 {
 	return TIE
 }
 
-func checkVerticalWin(state TicTacToeState) int64 {
+func checkVerticalWinTicTacToe(state TicTacToeState) int64 {
 	if state.board[0] != TIE && state.board[0] == state.board[3] && state.board[3] == state.board[6] {
 		return state.board[0]
 	}
@@ -146,7 +141,7 @@ func checkVerticalWin(state TicTacToeState) int64 {
 	return TIE
 }
 
-func checkDiagonalWin(state TicTacToeState) int64 {
+func checkDiagonalWinTicTacToe(state TicTacToeState) int64 {
 	if state.board[0] != TIE && state.board[0] == state.board[4] && state.board[4] == state.board[8] {
 		return state.board[0]
 	}
