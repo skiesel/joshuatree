@@ -158,6 +158,7 @@ func (monteCarlo MonteCarlo) getBestArc(node *decisionNode) *decisionArc {
 	for _, innerArc := range node.arcs {
 		score := monteCarlo.InteriorPolicy.GetScore(innerArc.numTrials, innerArc.numWins, node.numTrials)
 		if score > bestScore {
+			bestScore = score
 			bestArc = innerArc
 		}
 	}
