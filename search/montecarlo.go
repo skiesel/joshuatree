@@ -104,36 +104,45 @@ func (monteCarlo MonteCarlo) GetAction(domain domains.Domain) domains.Action {
 			currentNode = monteCarlo.sampleOutcome(domain, currentNode.state, bestArc)
 		}
 
-		if !domain.IsTerminal(currentNode.state) {
+		var win bool
+
+		if domain.IsTerminal(currentNode.state) {
+			win = domain.DidWin(currentNode.state, monteCarlo.PlayerId)
+		} else {
 			currentNode.arcs = monteCarlo.createdecisionArcs(domain, currentNode.state)
 			currentNode.initialized = true
-
-			win := monteCarlo.doFullRollOut(domain, currentNode.state)
-			for _, arc := range arcs {
-				if win {
-					arc.numWins++
-				}
-				arc.numTrials++
-			}
+			win = monteCarlo.doFullRollOut(domain, currentNode.state)
 		}
+
+		for _, arc := range arcs {
+			if win {
+				arc.numWins++
+			}
+			arc.numTrials++
+		}
+		
 	}
 
-	bestArc := monteCarlo.getBestArc(monteCarlo.current)
+	mostVisitedArc := monteCarlo.getHighestExpectedPayoutArc(monteCarlo.current)
 
-	for _, arc := range monteCarlo.current.arcs {
-		fmt.Printf("%s : %d / %d\n", domain.GetString(arc.action), arc.numWins, arc.numTrials)
-	}
+	for _, innerArc := range monteCarlo.current.arcs {
+		expectedPayout := float64(innerArc.numWins) / float64(innerArc.numTrials)
+		fmt.Printf("%s) %d / %d (%g)\n", domain.ActionString(innerArc.action), innerArc.numWins, innerArc.numTrials, expectedPayout)
+	} 
 
-	return bestArc.action
+	return mostVisitedArc.action
 }
 
 func (monteCarlo MonteCarlo) sampleOutcome(domain domains.Domain, state domains.State, arc *decisionArc) *decisionNode {
-	nextState := domain.ApplyAction(state, arc.action, monteCarlo.PlayerId)
+	nextState := state
+	if !domain.IsTerminal(nextState) {
+		nextState = domain.ApplyAction(state, arc.action, monteCarlo.PlayerId)
 
-	for _, id := range monteCarlo.OtherPlayerIds {
-		nextState = monteCarlo.doSimulationSingleStep(domain, state, id)
-		if domain.IsTerminal(nextState) {
-			break
+		for _, id := range monteCarlo.OtherPlayerIds {
+			if domain.IsTerminal(nextState) {
+				break
+			}
+			nextState = monteCarlo.doSimulationSingleStep(domain, state, id)
 		}
 	}
 
@@ -163,6 +172,19 @@ func (monteCarlo MonteCarlo) getBestArc(node *decisionNode) *decisionArc {
 		}
 	}
 	return bestArc
+}
+
+func (monteCarlo MonteCarlo) getHighestExpectedPayoutArc(node *decisionNode) *decisionArc {
+	highestExpectedPayout := -1.
+	var highestExpectedPayoutArc *decisionArc
+	for _, innerArc := range node.arcs {
+		expectedPayout := float64(innerArc.numWins) / float64(innerArc.numTrials)
+		if expectedPayout > highestExpectedPayout {
+			highestExpectedPayout = expectedPayout
+			highestExpectedPayoutArc = innerArc
+		}
+	}
+	return highestExpectedPayoutArc
 }
 
 func (monteCarlo MonteCarlo) doFullRollOut(domain domains.Domain, state domains.State) bool {
