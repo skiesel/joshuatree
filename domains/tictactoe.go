@@ -88,14 +88,12 @@ func (tictactoe TicTacToe) Draw(state State) {
 }
 
 func (tictactoe TicTacToe) IsTerminal(state State) bool {
-	tictactoeState := state.(TicTacToeState)
 	noMoreMoves := len(tictactoe.GetAvailableActions(state)) == 0
-	return noMoreMoves || checkHorizontalWinTicTacToe(tictactoeState) != TIE || checkVerticalWinTicTacToe(tictactoeState) != TIE || checkDiagonalWinTicTacToe(tictactoeState) != TIE
+	return noMoreMoves || tictactoe.WhoWon(state) != TIE
 }
 
 func (tictactoe TicTacToe) DidWin(state State, playerIndex int64) bool {
-	tictactoeState := state.(TicTacToeState)
-	return checkHorizontalWinTicTacToe(tictactoeState) == playerIndex || checkVerticalWinTicTacToe(tictactoeState) == playerIndex || checkDiagonalWinTicTacToe(tictactoeState) == playerIndex
+	return tictactoe.WhoWon(state) == playerIndex
 }
 
 func (tictactoe TicTacToe) WhoWon(state State) int64 {
